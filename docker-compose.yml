@@ -1,0 +1,23 @@
+version: '3.3'
+services:
+ wordpress:
+    depends_on:
+      - mysql-db
+    image: karimfadl/wordpress:v1
+    container_name: wordpress
+    ports:
+        - "8080:80"
+    restart: always
+
+
+ mysql-db:
+    image: mysql:5.7
+    container_name: mysql-db
+    ports:
+        - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: password
