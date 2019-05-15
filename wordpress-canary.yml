@@ -1,0 +1,123 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: mysql-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mysql-data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-db
+spec:
+  ports:
+  - port: 3306
+    nodePort: 3306
+    targetPort: mysql-port
+    protocol: TCP
+  selector:
+    app: mysql-db
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+  labels:
+    app: mysql-db
+spec:
+  selector:
+    matchLabels:
+      app: mysql-db
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql-db
+    spec:
+      containers:
+      - image: mysql:5.7
+        name: mysql-db
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        - name: MYSQL_DATABASE 
+          value: wordpress
+        - name: MYSQL_USER
+          value: wordpress
+        - name: MYSQL_PASSWORD
+          value: password
+        ports:
+        - containerPort: 3306
+          name: mysql-port
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wpcanary-service
+  annotations:
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+  - port: 80
+    nodePort: 8082
+    targetPort: wpcanary-port
+    protocol: TCP
+  selector:
+    app: wordpress
+    track: canary
+  type: NodePort
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: wordpress-deployment
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      track: canary
+  replicas: $CANARY_REPLICAS
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        track: canary
+    spec:
+      containers:
+      - name: wordpress
+        image: $DOCKER_IMAGE_NAME:$BUILD_NUMBER
+        ports:
+        - containerPort: 80
+          name: wpcanary-port
