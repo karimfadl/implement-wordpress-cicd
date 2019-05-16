@@ -59,7 +59,7 @@ pipeline {
                 milestone(1)
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
-                    configs: 'wordpress-canary.yml',
+                    configs: 'canary-wordpress.yml',
                     enableConfigSubstitution: true
                 )
                 kubernetesDeploy(
