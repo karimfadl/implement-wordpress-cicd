@@ -1,0 +1,45 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: my-database-backup
+spec:
+  schedule: "*/2 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: my-database-backup
+            image: karimfadl/mysqldb-backup:v1
+            imagePullPolicy: Always
+            env:
+              - name: AWS_ACCESS_KEY_ID
+                valueFrom:
+                   secretKeyRef:
+                     name: aws-access-key
+                     key: aws_access_key
+              - name: AWS_SECRET_ACCESS_KEY
+                valueFrom:
+                   secretKeyRef:
+                     name: aws-secret-access-key
+                     key: aws_secret_access_key
+              - name: AWS_DEFAULT_REGION
+                value: "us-east-2"
+              - name: AWS_BUCKET_NAME
+                value: "karimfadl-db"
+              - name: AWS_BUCKET_BACKUP_PATH
+                value: "/database"
+              - name: TARGET_DATABASE_HOST
+                value: "mysql-db"
+              - name: TARGET_DATABASE_PORT
+                value: "3306"
+              - name: TARGET_DATABASE_NAMES
+                value: "wordpress"
+              - name: TARGET_DATABASE_USER
+                value: "wordpress"
+              - name: TARGET_DATABASE_PASSWORD
+                valueFrom:
+                   secretKeyRef:
+                     name: database-password
+                     key: database_password
+          restartPolicy: Never
