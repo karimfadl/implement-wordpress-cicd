@@ -44,7 +44,7 @@ COPY ./config/nginx.conf /etc/nginx/
 COPY ./config/www.conf /etc/php-fpm.d/www.conf
 
 #Copy Source Code To Root Dir
-COPY wordpress/ /var/www/html/
+COPY code/ /var/www/html/
 
 #Chmod owner of root dir
 RUN chown -R nginx:nginx /var/www/html

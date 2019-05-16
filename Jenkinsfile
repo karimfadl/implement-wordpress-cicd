@@ -41,7 +41,7 @@ pipeline {
             steps {
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
-                    configs: 'wordpress-canary.yml',
+                    configs: 'canary-wordpress.yml',
                     enableConfigSubstitution: true
                 )
             }
