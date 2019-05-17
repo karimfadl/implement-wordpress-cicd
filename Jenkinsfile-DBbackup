@@ -1,0 +1,18 @@
+pipeline {
+    agent any
+    stages {
+        stage('DB-BackupDeploy') {
+            when {
+                branch 'master'
+            }
+            steps {
+                kubernetesDeploy(
+                    kubeconfigId: 'kubeconfig',
+                    configs: 'backup-mysql.yml',
+                    enableConfigSubstitution: true
+                )
+            }
+        }
+
+    }
+}
