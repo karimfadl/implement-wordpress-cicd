@@ -67,6 +67,11 @@ pipeline {
                     configs: 'wordpress.yml',
                     enableConfigSubstitution: true
                 )
+                kubernetesDeploy(
+                    kubeconfigId: 'kubeconfig',
+                    configs: 'hpa-wordpress.yml',
+                    enableConfigSubstitution: true
+                )
             }
         }
     }
