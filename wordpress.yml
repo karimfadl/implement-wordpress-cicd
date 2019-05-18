@@ -38,15 +38,13 @@ spec:
         ports:
         - containerPort: 80
           name: wordpress-port
-        livenessProbe:
-          initialDelaySeconds: 120
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 6
-          successThreshold: 1
-          httpGet: null
-          tcpSocket:
-            port: 80
-        resources:
-          requests:
-            cpu: 200m
+        volumeMounts:
+        - name: config-volume
+          mountPath: /var/www/html/
+      volumes:
+        - name: config-volume
+          configMap:
+            name: wordpress-config
+            items:
+            - key: wp-config.php
+              path: wp-config.php

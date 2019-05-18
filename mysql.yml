@@ -64,7 +64,10 @@ spec:
         name: mysql-db
         env:
         - name: MYSQL_ROOT_PASSWORD
-          value: password
+          valueFrom:
+             secretKeyRef:
+               name: rootdb-password
+               key: rootdb_password
         - name: MYSQL_DATABASE 
           value: wordpress
         - name: MYSQL_USER
