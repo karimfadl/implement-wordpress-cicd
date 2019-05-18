@@ -37,11 +37,20 @@ spec:
         image: $DOCKER_IMAGE_NAME:$BUILD_NUMBER
         env:
         - name: WORDPRESS_DB_HOST
-          value: mysql-db
+          valueFrom:
+            configMapKeyRef:
+              name: wordpress-configmap
+              key: wp_host
         - name: WORDPRESS_DB_NAME
-          value: wordpress
+          valueFrom:
+            configMapKeyRef:
+              name: wordpress-configmap
+              key: wp_database
         - name: WORDPRESS_DB_USER
-          value: wordpress
+          valueFrom:
+            configMapKeyRef:
+              name: wordpress-configmap
+              key: wp_user
         - name: WORDPRESS_DB_PASSWORD
           valueFrom:
              secretKeyRef:

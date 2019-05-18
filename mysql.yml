@@ -68,10 +68,16 @@ spec:
              secretKeyRef:
                name: rootdb-password
                key: rootdb_password
-        - name: MYSQL_DATABASE 
-          value: wordpress
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: wordpress-configmap
+              key: wp_database
         - name: MYSQL_USER
-          value: wordpress
+          valueFrom:
+            configMapKeyRef:
+              name: wordpress-configmap
+              key: wp_user
         - name: MYSQL_PASSWORD
           valueFrom:
              secretKeyRef:
