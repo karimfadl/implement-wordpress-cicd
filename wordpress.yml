@@ -38,13 +38,3 @@ spec:
         ports:
         - containerPort: 80
           name: wordpress-port
-        volumeMounts:
-        - name: config-volume
-          mountPath: /var/www/html/
-      volumes:
-        - name: config-volume
-          configMap:
-            name: wordpress-config
-            items:
-            - key: wp-config.php
-              path: wp-config.php
