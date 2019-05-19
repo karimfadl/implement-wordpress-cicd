@@ -59,3 +59,10 @@ spec:
         ports:
         - containerPort: 80
           name: wordpress-port
+        volumeMounts:
+        - name: wordpress-storage
+          mountPath: /var/www/html/wp-content/uploads/
+      volumes:
+      - name: wordpress-storage
+        persistentVolumeClaim:
+          claimName: wordpress-pvc
